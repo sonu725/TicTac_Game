@@ -1,26 +1,35 @@
 import './style.scss';
-//import { useState } from 'react';
-//import Sqaure from './Components/sqaure';
+import { useState } from 'react';
+import { calculateWinner } from './winner';
 import Board from './Components/Board';
 function App() {
-  // const [counter, setCounter] = useState(1);
-  // const onBtnClick = () => {
+  const [sqaures, Setsquares] = useState(Array(9).fill(null));
+  const [isXnext, setIsNext] = useState(true);
 
-  //   console.log('hello');
-  //   setCounter(counter => {
-  //     return counter + 1;
-  //   });
-  // };
+  const winner = calculateWinner(sqaures);
+  console.log(winner);
+  const nextPlayer = isXnext ? 'X' : '0';
+  const winnermsg = winner
+    ? `winner is ${winner}`
+    : `NextPlayer is ${nextPlayer}`;
+  const handleSquareClick = clickPosition => {
+    if (sqaures[clickPosition] || winner) return;
+
+    Setsquares(CurrentSquare => {
+      return CurrentSquare.map((SqaureValue, position) => {
+        if (clickPosition === position) return isXnext ? 'X' : '0';
+
+        return SqaureValue;
+      });
+    });
+
+    setIsNext(currentIsNext => !currentIsNext);
+  };
 
   return (
     <div className="app">
-      <Board />
-      {/* <div>
-        <button type="button" onClick={onBtnClick}>
-          <h2>Click me please</h2>
-        </button>
-        <div>{counter}</div>
-      </div> */}
+      <h2>{winnermsg}</h2>
+      <Board sqaures={sqaures} handleSquareClick={handleSquareClick} />
     </div>
   );
 }
