@@ -1,11 +1,14 @@
 import Sqaure from './sqaure';
 
-const Board = ({ sqaures, handleSquareClick }) => {
+const Board = ({ sqaures, handleSquareClick, winningSquares }) => {
   const renderSquare = position => {
+    //[0,1,2]
+    const isWinningSquare = winningSquares.includes(position);
     return (
       <Sqaure
         value={sqaures[position]}
         onClick={() => handleSquareClick(position)}
+        isWinningSquare={isWinningSquare}
       />
     );
   };

@@ -77,6 +77,21 @@ button {
   }
 }
 
+// .btn-reset {
+//   font-size: 0.8rem;
+//   color: #fff;
+//   border-radius: 15px;
+//   padding: 12px 18px;
+//   margin-top: 25px;
+//   transition: all 0.2s;
+//   background-color: $blue;
+//   box-shadow: 0px 0px 0px 1px $orange;
+//   &.active {
+//     background-color: $orange;
+//     box-shadow: none;
+//   }
+// }
+
 .btn-reset {
   font-size: 0.8rem;
   color: #fff;
@@ -86,9 +101,18 @@ button {
   transition: all 0.2s;
   background-color: $blue;
   box-shadow: 0px 0px 0px 1px $orange;
+
   &.active {
     background-color: $orange;
     box-shadow: none;
+  }
+
+  &:disabled {
+    background-color: #f67777; // gray background
+    color: #666666; // faded text
+    cursor: not-allowed; // "no entry" cursor
+    box-shadow: none; // remove shadow
+    opacity: 0.6; // make it look inactive
   }
 }
 

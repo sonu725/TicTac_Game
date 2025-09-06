@@ -3,30 +3,79 @@ import { useState } from 'react';
 import { calculateWinner } from './winner';
 import StatusMsg from './Components/StatusMsj';
 import Board from './Components/Board';
+import History from './Components/History';
+
+const NEW_GAME = [{ sqaures: Array(9).fill(null), isXnext: true }];
 function App() {
-  const [sqaures, Setsquares] = useState(Array(9).fill(null));
-  const [isXnext, setIsNext] = useState(true);
+  const [history, setHistory] = useState(NEW_GAME);
 
-  const winner = calculateWinner(sqaures);
-  //  console.log(winner);
+  const [currentMove, setCurrentMove] = useState(0);
+
+  const gamingBoard = history[currentMove];
+
+  const { winner, winningSquares } = calculateWinner(gamingBoard.sqaures);
+  const noMovesLeft = gamingBoard.sqaures.every(
+    squareValue => squareValue !== null
+  );
+  console.log({ HistoryLength: history.length, currentMove });
+
   const handleSquareClick = clickPosition => {
-    if (sqaures[clickPosition] || winner) return;
+    if (gamingBoard.sqaures[clickPosition] || winner) return;
 
-    Setsquares(CurrentSquare => {
-      return CurrentSquare.map((SqaureValue, position) => {
-        if (clickPosition === position) return isXnext ? 'X' : '0';
+    setHistory(currentHistory => {
+      const isTraversing = currentMove + 1 !== currentHistory.length;
 
-        return SqaureValue;
+      const lastGameState = isTraversing
+        ? currentHistory[currentMove]
+        : history[history.length - 1];
+
+      const nextSquareState = lastGameState.sqaures.map(
+        (SqaureValue, position) => {
+          if (clickPosition === position)
+            return lastGameState.isXnext ? 'X' : '0';
+          return SqaureValue;
+        }
+      );
+
+      const base = isTraversing
+        ? currentHistory.slice(0, currentHistory.indexOf(lastGameState) + 1)
+        : currentHistory;
+
+      return base.concat({
+        sqaures: nextSquareState,
+        isXnext: !lastGameState.isXnext,
       });
     });
 
-    setIsNext(currentIsNext => !currentIsNext);
+    setCurrentMove(move => move + 1);
   };
 
+  const moveTo = move => {
+    setCurrentMove(move);
+  };
+
+  const onNewGameRestart = () => {
+    setHistory(NEW_GAME);
+    setCurrentMove(0);
+  };
   return (
     <div className="app">
-      <StatusMsg winner={winner} isXnext={isXnext} sqaures={sqaures} />
-      <Board sqaures={sqaures} handleSquareClick={handleSquareClick} />
+      <StatusMsg winner={winner} gamingBoard={gamingBoard} />
+      <Board
+        sqaures={gamingBoard.sqaures}
+        handleSquareClick={handleSquareClick}
+        winningSquares={winningSquares}
+      />
+      <button
+        type="button"
+        onClick={onNewGameRestart}
+        className={`btn-reset ${winner || noMovesLeft ? 'active' : ''}`}
+        disabled={!(winner || noMovesLeft)}
+      >
+        Start New Game
+      </button>
+      <h3>Current Game History!</h3>
+      <History history={history} moveTo={moveTo} currentMove={currentMove} />
     </div>
   );
 }
